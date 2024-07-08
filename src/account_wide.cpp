@@ -7,6 +7,7 @@
 #include "Config.h"
 #include "Chat.h"
 
+
 enum MyPlayerAcoreString
 {
     HELLO_WORLD = 35410
@@ -21,6 +22,8 @@ public:
     void OnLogin(Player* player) override
     {
     	ChatHandler(player->GetSession()).PSendSysMessage(HELLO_WORLD);
+	LOG_INFO("module", "HELLO WORLD");
+
     }
 };
 
