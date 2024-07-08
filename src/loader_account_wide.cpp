@@ -3,7 +3,7 @@
  */
 
 // From SC
-void AddMyPlayerScripts();
+void AddAccountWideScripts();
 
 // Add all
 // cf. the naming convention https://github.com/azerothcore/azerothcore-wotlk/blob/master/doc/changelog/master.md#how-to-upgrade-4
@@ -11,6 +11,6 @@ void AddMyPlayerScripts();
 /*void Addskeleton_moduleScripts()*/
 void Addmod_account_wideScripts()
 {
-    AddMyPlayerScripts();
+    AddAccountWideScripts();
 }
 

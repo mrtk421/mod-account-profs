@@ -8,10 +8,10 @@
 #include "Chat.h"
 
 
-class MyPlayer : public PlayerScript
+class AccountWide : public PlayerScript
 {
 public:
-    MyPlayer() : PlayerScript("MyPlayer") { }
+    AccountWide() : PlayerScript("AccountWide") { }
 
     void OnLogin(Player* theplayer) override
     {
@@ -40,8 +40,7 @@ public:
     }
 };
 
-// Add all scripts in one
-void AddMyPlayerScripts()
+void AddAccountWideScripts()
 {
-    new MyPlayer();
+    new AccountWide();
 }
