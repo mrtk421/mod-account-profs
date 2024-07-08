@@ -31,8 +31,14 @@ public:
                 continue;
             do
             {
-            	LOG_INFO("module", "GUIDS: Spell: {}", spell_results->Fetch()[0].Get<uint32>());
+            	//LOG_INFO("module", "GUIDS: Spell: {}", spell_results->Fetch()[0].Get<uint32>());
                 Spells.push_back(spell_results->Fetch()[0].Get<uint32>());
+		if (spell_results->Fetch()[0].Get<uint32>() == 3908)
+		{
+            	    LOG_INFO("module", "Inside For-If: Spell: {}", spell_results->Fetch()[0].Get<uint32>());
+		    theplayer->learnSpell(  spell_results->Fetch()[0].Get<uint32>() );
+		}
+
             } while (spell_results->NextRow());
         }
 
