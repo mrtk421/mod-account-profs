@@ -8,21 +8,34 @@
 #include "Chat.h"
 
 
-enum MyPlayerAcoreString
-{
-    HELLO_WORLD = 35410
-};
-
-// Add player scripts
 class MyPlayer : public PlayerScript
 {
 public:
     MyPlayer() : PlayerScript("MyPlayer") { }
 
-    void OnLogin(Player* player) override
+    void OnLogin(Player* theplayer) override
     {
-    	ChatHandler(player->GetSession()).PSendSysMessage(HELLO_WORLD);
-	LOG_INFO("module", "HELLO WORLD");
+	std::vector<uint32> Guids;
+        uint32 playerAccountID = theplayer->GetSession()->GetAccountId();
+        QueryResult guid_results = CharacterDatabase.Query("SELECT `guid` FROM `characters` WHERE `account`={};", playerAccountID);
+	Field* fields = guid_results->Fetch();
+	Guids.push_back(fields[0].Get<uint32>());
+
+        std::vector<uint32> Spells;
+
+        for (auto& i : Guids)
+        {
+	LOG_INFO("module", "INSIDE FOR");
+            QueryResult spell_results = CharacterDatabase.Query("SELECT `spell` FROM `character_spell` WHERE `guid`={};", i);
+            if (!spell_results)
+                continue;
+            do
+            {
+            	LOG_INFO("module", "GUIDS: Spell: {}", spell_results->Fetch()[0].Get<uint32>());
+                Spells.push_back(spell_results->Fetch()[0].Get<uint32>());
+            } while (spell_results->NextRow());
+        }
+
 
     }
 };
