@@ -41,6 +41,35 @@ public:
             } while (spell_results->NextRow());
         }
 
+        for (uint32 i = 1; i < sSkillLineAbilityStore.GetNumRows(); ++i)
+        {
+	//LOG_INFO("accountwide", "Before sSkillLineAbilityStore declare");
+	    SkillLineAbilityEntry const* SkillInfo = sSkillLineAbilityStore.LookupEntry(i);
+	
+	    //LOG_INFO("accountwide", "Before SkillID declare");
+ if (SkillInfo && SkillInfo->Spell == 3908) {
+	    LOG_INFO("accountwide", "SkillID {}", SkillInfo->ID);
+}
+
+
+/*
+	LOG_INFO("accountwide", "Before SkillLine declare");
+            uint32 SkillLineID = SkillInfo->SkillLine;
+	LOG_INFO("accountwide", "Before Spell declare");
+            uint32 SpellID = SkillInfo->Spell;
+	    if (SpellID == 3908)
+	    {
+	LOG_INFO("accountwide", "Inside IF");
+		//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+		//LOG_INFO("accountwide", "SkillLine ID:  {}", SkillLineID );
+		//LOG_INFO("accountwide", "Spell ID:  {}", SpellID);
+		//LOG_INFO("accountwide", "-----------------------------");
+	    }
+*/
+
+
+	}
+/*
         for (uint32 i = 1; i < sSkillLineStore.GetNumRows(); ++i)
         {
             SkillLineEntry const* SkillInfo = sSkillLineStore.LookupEntry(i);
@@ -140,9 +169,9 @@ public:
                         break;
                 }
 			}
-		}
+	    }
 
-
+*/
 
     }
 };
