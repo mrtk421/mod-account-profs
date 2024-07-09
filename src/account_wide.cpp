@@ -55,7 +55,7 @@ public:
                     if (!value_skill_results)
                         continue;
                     do
-                    {
+		    {
                         Field* skill_fields = value_skill_results->Fetch();
                         MaxSkills.push_back(skill_fields[0].Get<uint32>());
                         if ( skill_fields[0].Get<uint32>() > max_skill_act )
