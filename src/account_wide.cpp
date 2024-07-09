@@ -16,18 +16,18 @@ public:
     void OnLogin(Player* theplayer) override
     {
 /*------------------------------------------------------------------------------------------------------------------------------*/
-/*	Get all the GUIDS (alts) on the account											*/
+/*    Get all the GUIDS (alts) on the account											*/
 /*------------------------------------------------------------------------------------------------------------------------------*/
-	uint32 playerAccountID = theplayer->GetSession()->GetAccountId();
-	std::vector<uint32> Guids;
-	QueryResult guid_results = CharacterDatabase.Query("SELECT `guid` FROM `characters` WHERE `account`={};", playerAccountID);
-	if (!guid_results)
-	    return;
-	do
-	{
-	    Field* act_fields = guid_results->Fetch();
-	    Guids.push_back(act_fields[0].Get<uint32>());
-	} while (guid_results->NextRow());
+        uint32 playerAccountID = theplayer->GetSession()->GetAccountId();
+        std::vector<uint32> Guids;
+        QueryResult guid_results = CharacterDatabase.Query("SELECT `guid` FROM `characters` WHERE `account`={};", playerAccountID);
+        if (!guid_results)
+            return;
+        do
+        {
+            Field* act_fields = guid_results->Fetch();
+            Guids.push_back(act_fields[0].Get<uint32>());
+        } while (guid_results->NextRow());
 /*------------------------------------------------------------------------------------------------------------------------------*/
 /*	Set the Skill Level of all Profession IDs												*/
 /*------------------------------------------------------------------------------------------------------------------------------*/
