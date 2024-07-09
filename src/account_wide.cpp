@@ -29,9 +29,55 @@ public:
 	    Guids.push_back(act_fields[0].Get<uint32>());
 	} while (guid_results->NextRow());
 /*------------------------------------------------------------------------------------------------------------------------------*/
+/*	Set the Skill Level of all Profession IDs												*/
+/*------------------------------------------------------------------------------------------------------------------------------*/
+	std::vector<uint32> profIds;
+	profIds.push_back(129);		// First Aid
+	profIds.push_back(164);		// Blacksmithing
+	profIds.push_back(165);		// Leatherworking
+	profIds.push_back(171);		// Alchemy
+	profIds.push_back(182);		// Herbalism
+	profIds.push_back(185);		// Cooking
+	profIds.push_back(186);		// Mining
+	profIds.push_back(197);		// Tailoring
+	profIds.push_back(202);		// Engineering
+	profIds.push_back(333);		// Enchanting
+	profIds.push_back(393);		// Skinning
+	profIds.push_back(755);		// Jewelcrafting
+	profIds.push_back(773);		// Inscription
+
+	for (auto ctr: profIds)
+	{
+	    std::vector<uint32> MaxSkills;
+	    uint32 max_skill_act = 0;
+	    for (auto& i : Guids)
+	    {
+		LOG_INFO("accountwide", "MaxSkills_GUID: {}", i);
+		QueryResult value_skill_results = CharacterDatabase.Query("SELECT `value` FROM `character_skills` WHERE `skill` = {} and `guid` = {};",ctr, i);
+		if (!value_skill_results)
+		    continue;
+		do
+		{
+		    Field* skill_fields = value_skill_results->Fetch();
+		    MaxSkills.push_back(skill_fields[0].Get<uint32>());
+		    if ( skill_fields[0].Get<uint32>() > max_skill_act )
+		    {
+			max_skill_act = skill_fields[0].Get<uint32>();
+		    }
+		    //uint32 sk_value = skill_fields[0].Get<uint32>();
+		    LOG_INFO("accountwide", "First Aid Max: {}", value_skill_results->Fetch()[0].Get<uint32>());
+		} while (value_skill_results->NextRow());
+	    }
+	    LOG_INFO("accountwide", "Maximum Skill for {} on Account: {}", ctr, max_skill_act);
+	    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 450);
+	}
+
+
+
+/*------------------------------------------------------------------------------------------------------------------------------*/
 /*	Find out the Max Skill Level of each Profession										*/
 /*------------------------------------------------------------------------------------------------------------------------------*/
-	std::vector<uint32> MaxSkills;
+/*	std::vector<uint32> MaxSkills;
 	uint32 max_first_aid = 0;
         for (auto& i : Guids)
 	{
@@ -52,14 +98,13 @@ public:
 	    } while (value_skill_results->NextRow());
 	}
 	LOG_INFO("accountwide", "Maximum First Aid on Account: {}", max_first_aid);
-
+*/
 /*------------------------------------------------------------------------------------------------------------------------------*/
 /*	Build a list of all known spells for each GUID for the aaccount owner							*/
 /*------------------------------------------------------------------------------------------------------------------------------*/
         std::vector<uint32> Spells;
         for (auto& i : Guids)
         {
-	    LOG_INFO("accountwide", "Spells_GUID: {}", i);
             QueryResult spell_results = CharacterDatabase.Query("SELECT `spell` FROM `character_spell` WHERE `guid`={};", i);
             if (!spell_results)
                 continue;
@@ -75,23 +120,28 @@ public:
 
             } while (spell_results->NextRow());
         }
-/*-----------------------------------------------------------------------------------------------------------------------------*/
-/*
-        for (uint32 i = 1; i < sSkillLineAbilityStore.GetNumRows(); ++i)
-        {
-	    SkillLineAbilityEntry const* SkillInfo = sSkillLineAbilityStore.LookupEntry(i);
- 	    if (SkillInfo)
+/*------------------------------------------------------------------------------------------------------------------------------*/
+/*	Compare the spells to Profession spells and learn if not known								*/
+/*------------------------------------------------------------------------------------------------------------------------------*/
+	for (auto ctr: profIds)
+	{
+	    for (uint32 i = 1; i < sSkillLineAbilityStore.GetNumRows(); ++i)
+	    {
+		SkillLineAbilityEntry const* SkillInfo = sSkillLineAbilityStore.LookupEntry(i);
+		if (SkillInfo)
 		{
-		if ( std::find(Spells.begin(), Spells.end(), SkillInfo->Spell) != Spells.end() )
-		{
-		    if ( SkillInfo->SkillLine == 197 && !theplayer->HasSpell(SkillInfo->Spell))
+		    if ( std::find(Spells.begin(), Spells.end(), SkillInfo->Spell) != Spells.end() )
 		    {
-			//LOG_INFO("accountwide", "Learning Tailoring Spell:  {}", SkillInfo->Spell);
-		        //theplayer->learnSpell( SkillInfo->Spell );
+			if ( SkillInfo->SkillLine == ctr && !theplayer->HasSpell(SkillInfo->Spell))
+			{
+			    LOG_INFO("accountwide", "Learning {} : Spell:  {}", ctr, SkillInfo->Spell);
+			    theplayer->learnSpell( SkillInfo->Spell );
+			}
 		    }
 		}
 	    }
 	}
+/*
         for (uint32 i = 1; i < sSkillLineStore.GetNumRows(); ++i)
         {
             SkillLineEntry const* SkillInfo = sSkillLineStore.LookupEntry(i);
@@ -103,89 +153,89 @@ public:
                 continue;
 
             uint32 SkillID = SkillInfo->id;
-            //uint32 CategoryID = SkillInfo->categoryId;
+            uint32 CategoryID = SkillInfo->categoryId;
 
             if (theplayer->HasSkill(SkillID))
             {
                 switch (SkillID)
                 {
                     case SKILL_ALCHEMY:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Alchemy Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_BLACKSMITHING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Blacksmithing Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_ENCHANTING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Enchanting Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_ENGINEERING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Engineering Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_INSCRIPTION:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Inscription Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_JEWELCRAFTING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Jewelcrafting Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_LEATHERWORKING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Leatherworking Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_TAILORING:
                 //player->SetSkill(SkillInfo->id, player->GetSkillStep(SkillInfo->id), 450, 450);
-                theplayer->SetSkill(SkillID, theplayer->GetSkillStep(SkillID),theplayer->GetSkillValue(SkillID) , 450);
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+                //theplayer->SetSkill(SkillID, theplayer->GetSkillStep(SkillID),theplayer->GetSkillValue(SkillID) , 450);
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Tailoring Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_SKINNING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Skinning Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_HERBALISM:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Herbalism Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_MINING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Mining Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_COOKING:
-			//LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "Cooking Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
                     case SKILL_FIRST_AID:
 			LOG_INFO("accountwide", "Skill ID:  {}", SkillID );
-			//LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
+			LOG_INFO("accountwide", "Category ID:  {}", CategoryID );
 			LOG_INFO("accountwide", "First Aid Skill:  {}", theplayer->GetSkillValue(SkillID) );
 			LOG_INFO("accountwide", "-----------------------------");
                         break;
