@@ -66,7 +66,40 @@ public:
                     } while (value_skill_results->NextRow());
             }
             LOG_INFO("accountwide", "Maximum Skill for {} on Account: {}", ctr, max_skill_act);
-            theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 450);
+            switch (max_skill_act)
+            {
+                case 1 ... 75:
+                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 75);
+                    //LOG_INFO("accountwide", "Apprentice: {} of 75", max_skill_act);
+                    break;
+                case 76 ... 150:
+                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 150);
+                    //LOG_INFO("accountwide", "Apprentice: {} of 150", max_skill_act);
+                    break;
+                case 151 ... 225:
+                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 225);
+                    //LOG_INFO("accountwide", "Apprentice: {} of 225", max_skill_act);
+                    break;
+                case 226 ... 300:
+                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 300);
+                    //LOG_INFO("accountwide", "Apprentice: {} of 300", max_skill_act);
+                    break;
+                case 301 ... 375:
+                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 375);
+                    //LOG_INFO("accountwide", "Apprentice: {} of 375", max_skill_act);
+                    break;
+                case 376 ... 450:
+                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 450);
+                    //LOG_INFO("accountwide", "Apprentice: {} of 450", max_skill_act);
+                    break;
+                default:
+                    //LOG_INFO("accountwide", "Not in range: {}", max_skill_act);
+                    break;
+            }
+
+
+
+
         }
 /*-----------------------------------------------------------------------------*/
 /*    Build a list of all known spells for each GUID for the aaccount owner    */
