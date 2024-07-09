@@ -16,3 +16,7 @@
 
 4. This is a super early release and hasn't been tested a lot.
 
+## Features to come
+
+1.  Account wide Professions (already a mod out there, but maybe include it here)
+2.  Account wide reputation
