@@ -114,13 +114,6 @@ public:
             do
             {
                 Spells.push_back(spell_results->Fetch()[0].Get<uint32>());
-                if (spell_results->Fetch()[0].Get<uint32>() == 3909)
-                {
-                   //LOG_INFO("accountwide", "Player knows Spell: {}", spell_results->Fetch()[0].Get<uint32>());
-                   //theplayer->learnSpell(  spell_results->Fetch()[0].Get<uint32>() );
-                }
-
-
             } while (spell_results->NextRow());
         }
 /*----------------------------------------------------------------------*/
