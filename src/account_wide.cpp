@@ -47,60 +47,33 @@ public:
 
         for (auto ctr: profIds)
         {
+            std::vector<uint32> ValueSkills;
             std::vector<uint32> MaxSkills;
             uint32 max_skill_act = 0;
+            uint32 value_skill_act = 0;
             for (auto& i : Guids)
             {
-                LOG_INFO("accountwide", "MaxSkills_GUID: {}", i);
                 QueryResult value_skill_results = CharacterDatabase.Query("SELECT `value` FROM `character_skills` WHERE `skill` = {} and `guid` = {};",ctr, i);
+                QueryResult max_skill_results = CharacterDatabase.Query("SELECT `max` FROM `character_skills` WHERE `skill` = {} and `guid` = {};",ctr, i);
                     if (!value_skill_results)
                         continue;
                     do
                     {
-                        Field* skill_fields = value_skill_results->Fetch();
-                        MaxSkills.push_back(skill_fields[0].Get<uint32>());
-                        if ( skill_fields[0].Get<uint32>() > max_skill_act )
+                        Field* max_skill_fields = max_skill_results->Fetch();
+                        Field* value_skill_fields = value_skill_results->Fetch();
+                        ValueSkills.push_back(value_skill_fields[0].Get<uint32>());
+                        MaxSkills.push_back(max_skill_fields[0].Get<uint32>());
+                        if ( max_skill_fields[0].Get<uint32>() > max_skill_act )
                         {
-                            max_skill_act = skill_fields[0].Get<uint32>();
+                            max_skill_act = max_skill_fields[0].Get<uint32>();
                         }
-                        LOG_INFO("accountwide", "Prof: {} -  Max: {}", ctr, value_skill_results->Fetch()[0].Get<uint32>());
+                        if ( value_skill_fields[0].Get<uint32>() > value_skill_act )
+                        {
+                            value_skill_act = value_skill_fields[0].Get<uint32>();
+                        }
                     } while (value_skill_results->NextRow());
             }
-            LOG_INFO("accountwide", "Maximum Skill for {} on Account: {}", ctr, max_skill_act);
-            switch (max_skill_act)
-            {
-                case 1 ... 75:
-                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 75);
-                    LOG_INFO("accountwide", "Apprentice: {} of 75", max_skill_act);
-                    break;
-                case 76 ... 150:
-                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 150);
-                    //LOG_INFO("accountwide", "Apprentice: {} of 150", max_skill_act);
-                    break;
-                case 151 ... 225:
-                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 225);
-                    //LOG_INFO("accountwide", "Apprentice: {} of 225", max_skill_act);
-                    break;
-                case 226 ... 300:
-                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 300);
-                    //LOG_INFO("accountwide", "Apprentice: {} of 300", max_skill_act);
-                    break;
-                case 301 ... 375:
-                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 375);
-                    //LOG_INFO("accountwide", "Apprentice: {} of 375", max_skill_act);
-                    break;
-                case 376 ... 450:
-                    theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 450);
-                    //LOG_INFO("accountwide", "Apprentice: {} of 450", max_skill_act);
-                    break;
-                default:
-                    //LOG_INFO("accountwide", "Not in range: {}", max_skill_act);
-                    break;
-            }
-
-
-
-
+            theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),value_skill_act , max_skill_act);
         }
 /*-----------------------------------------------------------------------------*/
 /*    Build a list of all known spells for each GUID for the aaccount owner    */
