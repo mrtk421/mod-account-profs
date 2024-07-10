@@ -43,6 +43,7 @@ public:
         profIds.push_back(393);        // Skinning
         profIds.push_back(755);        // Jewelcrafting
         profIds.push_back(773);        // Inscription
+        profIds.push_back(356);        // Fishing
 
         for (auto ctr: profIds)
         {
@@ -62,7 +63,7 @@ public:
                         {
                             max_skill_act = skill_fields[0].Get<uint32>();
                         }
-                        LOG_INFO("accountwide", "First Aid Max: {}", value_skill_results->Fetch()[0].Get<uint32>());
+                        LOG_INFO("accountwide", "Prof: {} -  Max: {}", ctr, value_skill_results->Fetch()[0].Get<uint32>());
                     } while (value_skill_results->NextRow());
             }
             LOG_INFO("accountwide", "Maximum Skill for {} on Account: {}", ctr, max_skill_act);
@@ -70,7 +71,7 @@ public:
             {
                 case 1 ... 75:
                     theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 75);
-                    //LOG_INFO("accountwide", "Apprentice: {} of 75", max_skill_act);
+                    LOG_INFO("accountwide", "Apprentice: {} of 75", max_skill_act);
                     break;
                 case 76 ... 150:
                     theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),max_skill_act , 150);
