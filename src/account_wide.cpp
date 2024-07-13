@@ -11,11 +11,13 @@ class AccountWide : public PlayerScript
 public:
     AccountWide() : PlayerScript("AccountWide") { }
 
-    void OnLogin(Player* theplayer) override
-    {
+  void OnLogin(Player* theplayer) override
+   {
+    if (sConfigMgr->GetOption<bool>("Account.Wide.Enable", false) == true) {
 /*-----------------------------------------------*/
 /*    Get all the GUIDS (alts) on the account    */
 /*-----------------------------------------------*/
+        LOG_INFO("accountwide", "Account Wide Module Enabled");
         uint32 playerAccountID = theplayer->GetSession()->GetAccountId();
         std::vector<uint32> Guids;
         QueryResult guid_results = CharacterDatabase.Query("SELECT `guid` FROM `characters` WHERE `account`={};", playerAccountID);
@@ -103,14 +105,18 @@ public:
                     {
                         if ( SkillInfo->SkillLine == ctr && !theplayer->HasSpell(SkillInfo->Spell))
                         {
-                            LOG_INFO("accountwide", "Learning {} : Spell:  {}", ctr, SkillInfo->Spell);
+                            //LOG_INFO("accountwide", "Learning {} : Spell:  {}", ctr, SkillInfo->Spell);
                             theplayer->learnSpell( SkillInfo->Spell );
                         }
                     }
                 }
             }
         }
+    } else {
+	LOG_INFO("accountwide", "Account Wide Module Disabled");
     }
+  }
+
 };
 
 void AddAccountWideScripts()
