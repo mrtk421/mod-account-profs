@@ -55,26 +55,26 @@ public:
             uint32 value_skill_act = 0;
             for (auto& i : Guids)
             {
-                QueryResult value_skill_results = CharacterDatabase.Query("SELECT `value` FROM `character_skills` WHERE `skill` = {} and `guid` = {};",ctr, i);
-                QueryResult max_skill_results = CharacterDatabase.Query("SELECT `max` FROM `character_skills` WHERE `skill` = {} and `guid` = {};",ctr, i);
-                    if (!value_skill_results)
-                        continue;
-                    do
-                    {
-                        Field* max_skill_fields = max_skill_results->Fetch();
-                        Field* value_skill_fields = value_skill_results->Fetch();
-                        ValueSkills.push_back(value_skill_fields[0].Get<uint32>());
-                        MaxSkills.push_back(max_skill_fields[0].Get<uint32>());
-                        if ( max_skill_fields[0].Get<uint32>() > max_skill_act )
-                        {
-                            max_skill_act = max_skill_fields[0].Get<uint32>();
-                        }
-                        if ( value_skill_fields[0].Get<uint32>() > value_skill_act )
-                        {
-                            value_skill_act = value_skill_fields[0].Get<uint32>();
-                        }
-                    } while (value_skill_results->NextRow());
+		QueryResult skillResults = CharacterDatabase.Query("SELECT `max`,`value` FROM `character_skills` WHERE `skill` = {} and `guid` = {};",ctr, i);
+		if (!skillResults)
+		    continue;
+		Field* fields = nullptr;
+		do
+		{
+		fields = skillResults->Fetch();
+		    uint32 max_skill_row = fields[0].Get<uint32>();
+		    uint32 value_skill_row = fields[1].Get<uint32>();
+		    if ( max_skill_row > max_skill_act )
+		    {
+			max_skill_act = max_skill_row;
+		    }
+		    if ( value_skill_row > value_skill_act )
+		    {
+			value_skill_act = value_skill_row;
+		    }
+		} while (skillResults->NextRow());
             }
+            
             theplayer->SetSkill(ctr, theplayer->GetSkillStep(ctr),value_skill_act , max_skill_act);
         }
 /*-----------------------------------------------------------------------------*/
@@ -105,7 +105,6 @@ public:
                     {
                         if ( SkillInfo->SkillLine == ctr && !theplayer->HasSpell(SkillInfo->Spell))
                         {
-                            //LOG_INFO("accountwide", "Learning {} : Spell:  {}", ctr, SkillInfo->Spell);
                             theplayer->learnSpell( SkillInfo->Spell );
                         }
                     }
