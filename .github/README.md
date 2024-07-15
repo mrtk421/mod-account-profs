@@ -1,4 +1,4 @@
-# mod-account-wide
+# mod-account-profs
 
 ### This is a module for [AzerothCore](http://www.azerothcore.org)
 
