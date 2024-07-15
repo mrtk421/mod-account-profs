@@ -6,18 +6,18 @@
 #include "Chat.h"
 
 
-class AccountWide : public PlayerScript
+class AccountProfs : public PlayerScript
 {
 public:
-    AccountWide() : PlayerScript("AccountWide") { }
+    AccountProfs() : PlayerScript("AccountProfs") { }
 
   void OnLogin(Player* theplayer) override
    {
-    if (sConfigMgr->GetOption<bool>("Account.Wide.Enable", false) == true) {
+    if (sConfigMgr->GetOption<bool>("Account.Profs.Enable", false) == true) {
 /*-----------------------------------------------*/
 /*    Get all the GUIDS (alts) on the account    */
 /*-----------------------------------------------*/
-        LOG_INFO("accountwide", "Account Wide Module Enabled");
+        LOG_INFO("accountprofs", "Account Profs Module Enabled");
         uint32 playerAccountID = theplayer->GetSession()->GetAccountId();
         std::vector<uint32> Guids;
         QueryResult guid_results = CharacterDatabase.Query("SELECT `guid` FROM `characters` WHERE `account`={};", playerAccountID);
@@ -112,13 +112,13 @@ public:
             }
         }
     } else {
-	LOG_INFO("accountwide", "Account Wide Module Disabled");
+	LOG_INFO("accountprofs", "Account Profs Module Disabled");
     }
   }
 
 };
 
-void AddAccountWideScripts()
+void AddAccountProfsScripts()
 {
-    new AccountWide();
+    new AccountProfs();
 }

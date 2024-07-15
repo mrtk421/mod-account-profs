@@ -4,7 +4,7 @@
 #    0 = Disabled
 ##################################################################################
 
-Account.Wide.Enable = 1
+Account.Profs.Enable = 1
 
 ##################################################################################
 #    SKILL
@@ -23,6 +23,6 @@ MaxPrimaryTradeSkill = 11
 # Logging Stuff                                                                                                                                  #
 ##################################################################################
 
-Appender.accountwide=2,5,1,AccountWide.log,w
-Logger.accountwide=4,Console Server accountwide
+Appender.accountprofs=2,5,1,AccountProfs.log,w
+Logger.accountprofs=4,Console Server accountprofs
 
